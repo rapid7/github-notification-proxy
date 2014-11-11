@@ -1,0 +1,11 @@
+/.bundle
+/cookbook/.kitchen
+/config/config.yml
+/config/database.yml
+/coverage
+/db
+/doc
+/log
+/tmp
+/vendor
+/.yardoc

@@ -1,0 +1,21 @@
+# THIS FILE IS MANAGED BY CHEF
+# Local modifications will be discarded.
+
+# github-notification-proxy
+#
+# This runs the GitHub Notification Proxy client daemon.
+# See: https://github.com/rapid7/github-notification-proxy
+
+description "GitHub Notification Proxy Client"
+
+# Start when all network devices are active
+start on (started networking)
+stop on runlevel [!2345]
+
+respawn
+respawn limit 10 5
+
+setuid <%= node['github_notification_proxy']['user'] %>
+chdir <%= node['github_notification_proxy']['client']['install_dir'] %>
+
+exec <%= @rvm_path %>/bin/rvm <%= node['github_notification_proxy']['rvm_alias'] %> do bin/client start

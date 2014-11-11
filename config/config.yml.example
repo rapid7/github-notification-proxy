@@ -1,0 +1,21 @@
+server_url: http://localhost:9292
+ws_sleep_delay: 5
+ws_max_lifetime: 14400
+ws_auto_reconnect: true
+max_payload_size: 131072
+handlers:
+  jira:
+    match: ^(\d+)$
+    url: https://myjiraserver.local/rest/bitbucket/1.0/repository/$1/sync
+  jenkins:
+    - match: ^notifyCommit\?([\w\/\.\-%]+)=?$
+      url: https://myjenkinsserver.local/git/notifyCommit?url=git@github.com:$1.git
+    - match: ^my-job/([^\/]+)$
+      url: https://myjenkinsserver.local/job/My-Job/build?token=myjenkinsbuildtoken&cause=$1
+    - match: ^ghprbhook/$
+      url: https://myjenkinsserver.local/ghprbhook/
+  crucible:
+    match: ^scan/([\w\/\.\-%]+)$
+    url: https://mycrucibleserver.local/rest-service-fecru/admin/repositories-v1/$1/scan
+    headers:
+      X-Api-Key: mycrucibleapikey

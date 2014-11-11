@@ -1,0 +1,24 @@
+# THIS FILE IS MANAGED BY CHEF
+# Local modifications will be discarded.
+<%
+  require 'uri'
+  require 'yaml'
+  server_url_host = node['github_notification_proxy']['http']['host_name']
+  if node['github_notification_proxy']['http']['ssl']['enabled']
+    server_url_scheme = 'https://'
+    server_url_port = node['github_notification_proxy']['http']['ssl']['port']
+  else
+    server_url_scheme = 'http://'
+    server_url_port = node['github_notification_proxy']['http']['port']
+  end
+  server_url = URI.parse("#{server_url_scheme}#{server_url_host}:#{server_url_port}")
+-%>
+
+server_url: <%= server_url %>
+ws_sleep_delay: <%= node['github_notification_proxy']['ws_sleep_delay'] %>
+ws_max_lifetime: <%= node['github_notification_proxy']['ws_max_lifetime'] %>
+ws_auto_reconnect: <%= node['github_notification_proxy']['ws_auto_reconnect'] %>
+max_payload_size: <%= node['github_notification_proxy']['max_payload_size'] %>
+<% if @handlers && !@handlers.empty? %>
+<%= YAML.dump('handlers' => JSON.parse(@handlers.to_json) ).gsub("---\n", '') %>
+<% end %>
