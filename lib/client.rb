@@ -186,7 +186,7 @@ module GithubNotificationProxy
         uris = handler['uris'] if handler
         return true unless uris
 
-        if handler.has_key?('ssl_verify') && handler['ssl_verify'] === false
+        if handler.has_key?('verify_ssl') && handler['verify_ssl'] === false
           verify_mode = OpenSSL::SSL::VERIFY_NONE
         else
           verify_mode = OpenSSL::SSL::VERIFY_PEER
