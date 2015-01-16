@@ -1,6 +1,10 @@
 GitHub Notification Proxy CHANGELOG
 ===================================
 
+v0.1.2
+------
+- Fix typo in verify_ssl handler attribute
+
 v0.1.1
 ------
 - Add support for multiple URLs per handler
