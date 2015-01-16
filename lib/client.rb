@@ -162,13 +162,16 @@ module GithubNotificationProxy
           return
         end
 
-        url = match['url'].dup
-        match_data.captures.each_with_index do |val, i|
-          url.gsub!("$#{i+1}", val)
+        urls = match['url'].dup
+        urls = [urls] unless urls.is_a?(Array)
+        urls.each do |url|
+          match_data.captures.each_with_index do |val, i|
+            url.gsub!("$#{i+1}", val)
+          end
         end
 
         match.merge({
-          'uri' => URI.parse(url)
+          'uris' => urls.map { |url| URI.parse(url) }
         })
       end
 
@@ -180,9 +183,10 @@ module GithubNotificationProxy
       # the notification.
       def process_notification(notification)
         handler = parse_notification(notification)
-        uri = handler['uri'] if handler
+        uris = handler['uris'] if handler
+        return true unless uris
 
-        if uri
+        uris.each do |uri|
           begin
             Net::HTTP.start(uri.host, uri.port, use_ssl: (uri.scheme == 'https')) do |http|
               if handler.has_key?('method') && handler['method'].to_s == 'get'

@@ -13,7 +13,10 @@ default['github_notification_proxy']['handlers'] = {}
 #default['github_notification_proxy']['handlers']['jenkins'] = [
 #  {
 #    'match' => '^notifyCommit\?([\w\/\.\-%]+)=?$',
-#    'url' => 'https://myjenkinsserver.local/git/notifyCommit?url=git@github.com:$1.git',
+#    'url' => [
+#      'https://myjenkinsserver.local/git/notifyCommit?url=git@github.com:$1.git',
+#      'https://myotherjenkinsserver.local/git/notifyCommit?url=git@github.com:$1.git'
+#    ],
 #    'method' => 'get'
 #  },
 #  {
