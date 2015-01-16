@@ -14,6 +14,10 @@ handlers:
       url: https://myjenkinsserver.local/job/My-Job/build?token=myjenkinsbuildtoken&cause=$1
     - match: ^ghprbhook/$
       url: https://myjenkinsserver.local/ghprbhook/
+  insecure:
+    match: ^insecure$
+    url: https://selfsignedcert.local/notify/
+    verify_ssl: false
   crucible:
     match: ^scan/([\w\/\.\-%]+)$
     url: https://mycrucibleserver.local/rest-service-fecru/admin/repositories-v1/$1/scan

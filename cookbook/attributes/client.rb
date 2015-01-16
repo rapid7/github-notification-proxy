@@ -24,6 +24,11 @@ default['github_notification_proxy']['handlers'] = {}
 #    'url' => 'https://myjenkinsserver.local/job/Git-Mirror-Update/build?token=myjenkinsbuildtoken&cause=$1'
 #  },
 #  {
+#    'match' => '^insecure$/',
+#    'url' => 'https://selfsignedcert.local/notify',
+#    'verify_ssl' => false
+#  },
+#  {
 #    'match' => '^ghprbhook/$',
 #    'url' => 'https://myjenkinsserver.local/ghprbhook/'
 #  }

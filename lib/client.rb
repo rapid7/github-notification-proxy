@@ -186,9 +186,15 @@ module GithubNotificationProxy
         uris = handler['uris'] if handler
         return true unless uris
 
+        if handler.has_key?('ssl_verify') && handler['ssl_verify'] === false
+          verify_mode = OpenSSL::SSL::VERIFY_NONE
+        else
+          verify_mode = OpenSSL::SSL::VERIFY_PEER
+        end
+
         uris.each do |uri|
           begin
-            Net::HTTP.start(uri.host, uri.port, use_ssl: (uri.scheme == 'https')) do |http|
+            Net::HTTP.start(uri.host, uri.port, use_ssl: (uri.scheme == 'https'), verify_mode: verify_mode) do |http|
               if handler.has_key?('method') && handler['method'].to_s == 'get'
                 req = Net::HTTP::Get.new(uri.to_s)
               else
