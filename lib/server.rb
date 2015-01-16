@@ -36,6 +36,7 @@ module GithubNotificationProxy
         data['ack'].each do |id|
           notification = Notification.get(id)
           if notification
+            logger.info "Acknowledged \##{id}: #{notification.handler}/#{notification.path}"
             result &= notification.destroy
           end
         end
@@ -147,6 +148,9 @@ module GithubNotificationProxy
             end
 
             unless delivery.empty?
+              delivery.each do |notification|
+                logger.info "Delivering \##{notification.id}: #{notification.handler}/#{notification.path}"
+              end
               ws.send_data(JSON.generate(delivery))
             end
 
