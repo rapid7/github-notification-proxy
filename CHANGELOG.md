@@ -1,6 +1,10 @@
 GitHub Notification Proxy CHANGELOG
 ===================================
 
+v0.1.3
+------
+- Fix bug that caused wrong notification to be delivered
+
 v0.1.2
 ------
 - Fix typo in verify_ssl handler attribute
