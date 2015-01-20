@@ -162,7 +162,7 @@ module GithubNotificationProxy
           return
         end
 
-        urls = Array(urls).map do |url|
+        urls = Array(match['url']).map do |url|
           match_data.captures.each_with_index do |val, i|
             url = url.gsub("$#{i+1}", val)
           end
