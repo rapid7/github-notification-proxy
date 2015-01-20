@@ -1,7 +1,7 @@
 GitHub Notification Proxy CHANGELOG
 ===================================
 
-v0.1.3
+v0.1.4
 ------
 - Fix bug that caused wrong notification to be delivered
 
