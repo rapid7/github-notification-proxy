@@ -162,12 +162,11 @@ module GithubNotificationProxy
           return
         end
 
-        urls = match['url'].dup
-        urls = [urls] unless urls.is_a?(Array)
-        urls.each do |url|
+        urls = Array(urls).map do |url|
           match_data.captures.each_with_index do |val, i|
-            url.gsub!("$#{i+1}", val)
+            url = url.gsub("$#{i+1}", val)
           end
+          url
         end
 
         match.merge({
