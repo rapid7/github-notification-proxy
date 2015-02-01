@@ -199,9 +199,9 @@ module GithubNotificationProxy
           begin
             Net::HTTP.start(uri.host, uri.port, use_ssl: (uri.scheme == 'https'), verify_mode: verify_mode) do |http|
               if handler.has_key?('method') && handler['method'].to_s == 'get'
-                req = Net::HTTP::Get.new(uri.to_s)
+                req = Net::HTTP::Get.new(uri.request_uri)
               else
-                req = Net::HTTP::Post.new(uri.to_s)
+                req = Net::HTTP::Post.new(uri.request_uri)
                 req.body = notification['payload']
                 req.content_type = notification['content_type']
               end
