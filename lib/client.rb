@@ -90,11 +90,12 @@ module GithubNotificationProxy
           data = JSON.parse(data)
           ids = []
           data.each do |notification|
+            logger.debug "Received notification via websocket: #{notification.inspect}"
             if process_notification(notification)
               ids << notification['id']
             end
           end
-          logger.info "Acknowleding #{ids.map {|id| "##{id}"}.join(', ')}"
+          logger.info "Acknowledging #{ids.map {|id| "##{id}"}.join(', ')}"
           ws.send(JSON.generate({ack: ids}))
         end
 
@@ -142,6 +143,8 @@ module GithubNotificationProxy
       end
 
       def parse_notification(notification)
+        logger.debug "parse_notification ##{notification['id']}, enter"
+
         unless config.handlers.has_key?(notification['handler'])
           logger.warn "Unknown handler: #{notification['handler']}"
           return
@@ -170,9 +173,12 @@ module GithubNotificationProxy
           url
         end
 
-        match.merge({
+        result = {}.merge(match).merge({
           'uris' => urls.map { |url| URI.parse(url) }
         })
+        logger.debug "parse_notification ##{notification['id']}, return: #{result.inspect}"
+
+        result
       end
 
       # Process the notification.  This delivers the notification internally
@@ -182,12 +188,15 @@ module GithubNotificationProxy
       # @return [Boolean] true is always returned, even if we cannot process
       # the notification.
       def process_notification(notification)
+        logger.debug "process_notification ##{notification['id']}, enter"
+
         handler = parse_notification(notification)
         uris = handler['uris'] if handler
         if !uris || uris.empty?
           logger.warn "No uris found for notification: #{notification}"
           return true
         end
+        logger.debug "process_notification ##{notification['id']}, uris: #{uris.map {|uri| uri.to_s}.join(', ')}"
 
         if handler.has_key?('verify_ssl') && handler['verify_ssl'] === false
           verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -196,6 +205,7 @@ module GithubNotificationProxy
         end
 
         uris.each do |uri|
+          logger.debug "process_notification ##{notification['id']}, process uri: #{uri.to_s}"
           begin
             Net::HTTP.start(uri.host, uri.port, use_ssl: (uri.scheme == 'https'), verify_mode: verify_mode) do |http|
               if handler.has_key?('method') && handler['method'].to_s == 'get'
@@ -210,6 +220,7 @@ module GithubNotificationProxy
                   req[header] = val
                 end
               end
+              logger.debug "process_notification ##{notification['id']}, sending #{req.class} request"
               http.request(req) do |response|
                 if (200..299).include?(response.code.to_i)
                   logger.info "Processed ##{notification['id']} #{uri} with status #{response.code}."
@@ -218,8 +229,8 @@ module GithubNotificationProxy
                 end
                 headers = []
                 response.each_header { |h, val| headers << "#{h}: #{val}" }
-                logger.debug "Response headers:\n#{headers.join("\n")}"
-                logger.debug "Response body:\n#{response.body}"
+                logger.debug "process_notification ##{notification['id']}, response headers:\n#{headers.join("\n")}"
+                logger.debug "process_notification ##{notification['id']}, response body:\n#{response.body}"
               end
             end
           rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, Errno::ECONNREFUSED, EOFError, SocketError,
@@ -228,6 +239,7 @@ module GithubNotificationProxy
           end
         end
 
+        logger.debug "process_notification ##{notification['id']}, return: true"
         true
       end
 
