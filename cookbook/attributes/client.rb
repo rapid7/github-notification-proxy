@@ -2,6 +2,9 @@ default['github_notification_proxy']['client']['install_dir'] = "/home/#{node['g
 
 default['github_notification_proxy']['ws_auto_reconnect'] = true
 
+default['github_notification_proxy']['client_log_file'] = 'client.log'
+default['github_notification_proxy']['client_log_level'] = 'info'
+
 default['github_notification_proxy']['handlers'] = {}
 
 # HANDLER EXAMPLES:

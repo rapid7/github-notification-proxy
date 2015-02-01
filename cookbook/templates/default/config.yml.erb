@@ -19,6 +19,8 @@ ws_sleep_delay: <%= node['github_notification_proxy']['ws_sleep_delay'] %>
 ws_max_lifetime: <%= node['github_notification_proxy']['ws_max_lifetime'] %>
 ws_auto_reconnect: <%= node['github_notification_proxy']['ws_auto_reconnect'] %>
 max_payload_size: <%= node['github_notification_proxy']['max_payload_size'] %>
+client_log_file: <%= node['github_notification_proxy']['client_log_file'] %>
+client_log_level: <%= node['github_notification_proxy']['client_log_level'] %>
 <% if @handlers && !@handlers.empty? %>
 <%= YAML.dump('handlers' => JSON.parse(@handlers.to_json) ).gsub("---\n", '') %>
 <% end %>

@@ -136,8 +136,12 @@ module GithubNotificationProxy
 
       def logger
         @logger ||= begin
-          logger = ::Logger.new($stdout)
-          logger.level = ::Logger::INFO
+          if config.client_log_file.nil? || config.client_log_file.strip.empty?
+            logger = ::Logger.new($stdout)
+          else
+            logger = ::Logger.new(File.absolute_path(config.client_log_file, config.log_dir))
+          end
+          logger.level = ::Logger.const_get(config.client_log_level.upcase)
           logger
         end
       end

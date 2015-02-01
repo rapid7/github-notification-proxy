@@ -64,7 +64,17 @@ module GithubNotificationProxy
         'ws_sleep_delay' => 5,
         'ws_max_lifetime' => 14400,
         'ws_auto_reconnect' => true,
+        'client_log_file' => nil,
+        'client_log_level' => 'info',
       }
+    end
+
+    def log_dir
+      File.join(root_dir, 'log')
+    end
+
+    def root_dir
+      @root_dir ||= File.expand_path('..', File.dirname(__FILE__))
     end
 
     def method_missing(meth, *args, &block)
