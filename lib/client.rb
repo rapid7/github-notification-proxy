@@ -94,6 +94,7 @@ module GithubNotificationProxy
               ids << notification['id']
             end
           end
+          logger.info "Acknowleding #{ids.map {|id| "##{id}"}.join(', ')}"
           ws.send(JSON.generate({ack: ids}))
         end
 
@@ -183,7 +184,10 @@ module GithubNotificationProxy
       def process_notification(notification)
         handler = parse_notification(notification)
         uris = handler['uris'] if handler
-        return true unless uris
+        if !uris || uris.empty?
+          logger.warn "No uris found for notification: #{notification}"
+          return true
+        end
 
         if handler.has_key?('verify_ssl') && handler['verify_ssl'] === false
           verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -208,7 +212,7 @@ module GithubNotificationProxy
               end
               http.request(req) do |response|
                 if (200..299).include?(response.code.to_i)
-                  logger.info "Processed #{uri} with status #{response.code}."
+                  logger.info "Processed ##{notification['id']} #{uri} with status #{response.code}."
                 else
                   logger.warn "Error #{response.code} notifying #{uri}."
                 end
