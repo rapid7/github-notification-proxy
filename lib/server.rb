@@ -141,6 +141,7 @@ module GithubNotificationProxy
       end
 
       thread = Thread.new do
+        logger.debug "web socket thread ##{Thread.current.object_id}, started"
         Thread.current.abort_on_exception = true
 
         # Close connections older than ws_max_lifetime to force clients
@@ -164,6 +165,7 @@ module GithubNotificationProxy
 
             unless delivery.empty?
               delivery.each do |notification|
+                logger.debug "web socket thread ##{Thread.current.object_id}, deliver ##{notification.id}"
                 logger.info "Delivering \##{notification.id}: #{notification.handler}/#{notification.path}"
               end
               ws.send_data(JSON.generate(delivery))
@@ -184,6 +186,8 @@ module GithubNotificationProxy
           ws.send_data(nil, :close)
           ws.close
         end
+
+        logger.debug "web socket thread ##{Thread.current.object_id}, finished"
       end
 
       # Return async rack response
