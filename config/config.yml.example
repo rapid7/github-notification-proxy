@@ -5,6 +5,8 @@ ws_auto_reconnect: true
 max_payload_size: 131072
 client_log_file: client.log
 client_log_level: info
+server_log_file: server.log
+server_log_level: info
 handlers:
   jira:
     match: ^(\d+)$

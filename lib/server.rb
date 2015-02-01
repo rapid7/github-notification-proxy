@@ -10,6 +10,8 @@ require 'core_ext'
 
 require 'config'
 require 'database'
+require 'logger'
+Logger.class_eval { alias :write :'<<' }
 
 module GithubNotificationProxy
 
@@ -18,8 +20,20 @@ module GithubNotificationProxy
   class Server < Sinatra::Base
     register Sinatra::Hijacker
 
+    def self.logger
+      @logger ||= begin
+        if GithubNotificationProxy.config.server_log_file.nil? || GithubNotificationProxy.config.server_log_file.strip.empty?
+          logger = ::Logger.new($stdout)
+        else
+          logger = ::Logger.new(File.absolute_path(GithubNotificationProxy.config.server_log_file, GithubNotificationProxy.config.log_dir))
+        end
+        logger.level = ::Logger.const_get(GithubNotificationProxy.config.server_log_level.upcase)
+        logger
+      end
+    end
+
     configure :production, :development do
-      enable :logging
+      use Rack::CommonLogger, logger
     end
 
     # Acknowledges (deletes) notifications given a JSON array of IDs.
@@ -30,6 +44,7 @@ module GithubNotificationProxy
         logger.error "Don't know how to acknowledge: #{data}"
         return false
       end
+      logger.debug "ack, data: #{data.inspect}"
 
       result = true
       if data && data['ack'] && data['ack'].is_a?(Array)
@@ -175,5 +190,10 @@ module GithubNotificationProxy
       [-1, {}, []]
     end
 
+    private
+
+    def logger
+      self.class.logger
+    end
   end
 end

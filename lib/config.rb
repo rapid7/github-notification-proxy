@@ -66,6 +66,8 @@ module GithubNotificationProxy
         'ws_auto_reconnect' => true,
         'client_log_file' => nil,
         'client_log_level' => 'info',
+        'server_log_file' => nil,
+        'server_log_level' => 'info',
       }
     end
 
