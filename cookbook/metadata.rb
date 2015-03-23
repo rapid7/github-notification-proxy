@@ -12,7 +12,7 @@ depends 'apt', '>= 2.3.10'
 depends 'database', '>= 2.0'
 depends 'nginx', '>= 2.0'
 depends 'postgresql', '>= 3.4.0'
-depends 'ssh_known_hosts'
+depends 'ssh_known_hosts', '>= 2.0.0'
 
 # rvm is a rapid7 patched version, see Berksfile
 depends 'rvm', '= 0.9.0'
