@@ -8,15 +8,15 @@ DEPENDENCIES
     branch: patches_0.9.0
 
 GRAPH
-  apt (2.6.1)
+  apt (2.7.0)
   bluepill (2.3.1)
     rsyslog (>= 0.0.0)
-  build-essential (2.2.0)
-  chef-sugar (3.0.1)
+  build-essential (2.2.2)
+  chef-sugar (3.1.0)
   chef_gem (0.1.0)
   database (4.0.3)
     postgresql (>= 1.0.0)
-  github_notification_proxy (0.0.1)
+  github_notification_proxy (0.1.5)
     apt (>= 2.3.10)
     database (>= 2.0.0)
     nginx (>= 2.0.0)
