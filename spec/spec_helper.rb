@@ -6,10 +6,20 @@ require 'rspec'
 require 'rack/test'
 require 'database_cleaner'
 require 'data_mapper'
+require 'logger'
 
 lib = File.expand_path('../lib', File.dirname(__FILE__))
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'database'
+
+class NullLogger < ::Logger
+  def initialize(*args)
+    super(nil)
+  end
+
+  def add(*args, &block)
+  end
+end
 
 RSpec.configure do |config|
   # Disable old "should" syntax.  Force all specs to use

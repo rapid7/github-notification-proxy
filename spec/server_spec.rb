@@ -5,6 +5,10 @@ module GithubNotificationProxy
 describe 'Server' do
   let(:app) { Server.new }
 
+  before do
+    allow(Server).to receive(:logger).and_return(NullLogger.new)
+  end
+
   context 'payload post' do
     it 'returns 200 if save is successful' do
       post 'jira-proxy/1/sync'
