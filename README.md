@@ -26,7 +26,7 @@ delivered.
 ## Server
 
 The Github Notification Proxy can run on any Rack-based server.  We recommend
-[Puma][http://puma.io].  To start the server:
+[Puma](http://puma.io).  To start the server:
 
 ```sh
 puma
