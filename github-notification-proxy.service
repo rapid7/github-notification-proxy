@@ -1,0 +1,43 @@
+# github-notification-proxy systemd target
+# monitor logs with: journalctl -f -u github-notification-proxy
+
+[Unit]
+Description=github-notification-proxy
+Documentation=https://github.com/rapid7/github-notification-proxy
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/srv/github-notification-proxy
+ExecStart=/usr/local/bin/bundle exec /usr/local/bin/puma -e production
+TimeoutStopSec=10
+KillMode=mixed
+KillSignal=SIGTERM
+
+Restart=always
+RestartSec=2s
+LimitNOFILE=65536
+
+# Hardening
+NoNewPrivileges=yes
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+SystemCallFilter=~@clock @cpu-emulation @debug @module @raw-io @obsolete @keyring @swap @reboot @setuid @privileged @memlock
+
+ProtectSystem=strict
+PrivateDevices=yes
+PrivateUsers=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectKernelModules=true
+ProtectKernelTunables=yes
+
+StandardOutput=syslog+console
+StandardError=syslog+console
+
+ReadWriteDirectories=-/proc/self
+ReadWriteDirectories=-/var/run
+ReadWriteDirectories=-/srv/github-notification-proxy
+
+[Install]
+WantedBy=multi-user.target
