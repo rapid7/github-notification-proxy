@@ -5,6 +5,7 @@ require 'config'
 require 'json'
 require 'logger'
 require 'thor'
+require 'net/http'
 require 'websocket-client'
 
 module GithubNotificationProxy
