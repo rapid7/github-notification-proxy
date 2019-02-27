@@ -5,6 +5,7 @@ require 'config'
 require 'json'
 require 'logger'
 require 'thor'
+require 'net/http'
 require 'websocket-client'
 
 module GithubNotificationProxy
@@ -63,9 +64,7 @@ module GithubNotificationProxy
       # Set process title
       $0 = 'github-notification-proxy'
 
-      ws = nil
       err = nil
-      reconnect = config.ws_auto_reconnect
       closed_mutex = Mutex.new
       closed_resource = ConditionVariable.new
 
@@ -74,9 +73,8 @@ module GithubNotificationProxy
           Thread.new do
             Thread.current.abort_on_exception
             closed_mutex.synchronize {
+              err = true
               logger.info "Gracefulling stopping..."
-              reconnect = false
-              ws.close
               closed_resource.broadcast()
             }
           end
@@ -84,46 +82,17 @@ module GithubNotificationProxy
       end
 
       loop do
-        ws = WebSocket::Client.new("#{config.server_url}/retrieve-ws")
-
-        ws.onmessage do |data|
-          data = JSON.parse(data)
-          ids = []
-          data.each do |notification|
-            logger.debug "Received notification via websocket: #{notification.inspect}"
-            if process_notification(notification)
-              ids << notification['id']
-            end
+        ids = []
+        fetch_notifications.each do |notification|
+          if process_notification(notification)
+            ids << notification['id']
           end
-          logger.info "Acknowledging #{ids.map {|id| "##{id}"}.join(', ')}"
-          ws.send(JSON.generate({ack: ids}))
         end
+        ack_notifications(ids)
 
-        ws.onopen do
-          logger.info "Connected"
-        end
+        sleep 1
 
-        ws.onerror do |error|
-          logger.error error
-        end
-
-        if err = ws.run
-          logger.error err
-        end
-
-        if reconnect
-          logger.info "Reconnecting..."
-          closed_mutex.synchronize {
-            # Sleep for a few seconds to allow the server to reset.
-            # The while loop is because a CTRL+C will signal the wait early.
-            wait_until = Time.now + 5
-            while (reconnect && Time.now < wait_until)
-              closed_resource.wait(closed_mutex, 5)
-            end
-          }
-        end
-
-        break unless reconnect
+        break if err
       end
 
       exit 1 if err
