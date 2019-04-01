@@ -186,7 +186,9 @@ module GithubNotificationProxy
               else
                 req = Net::HTTP::Post.new(uri.request_uri)
                 req.body = notification['payload']
-                req.content_type = notification['content_type']
+                if !notification['content_type'].nil?
+                  req.content_type = notification['content_type']
+                end
               end
               [notification['headers'], handler['headers']].compact.each do |headers|
                 headers.each do |header, val|
