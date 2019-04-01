@@ -13,6 +13,9 @@ require 'database'
 require 'logger'
 Logger.class_eval { alias :write :'<<' }
 
+$stats_received_cnt = 0
+$stats_delivered_cnt = 0
+
 module GithubNotificationProxy
 
   # `Server` is a `Sinatra` application that receives and delivers Github
@@ -51,6 +54,9 @@ module GithubNotificationProxy
         data['ack'].each do |id|
           notification = Notification.get(id)
           if notification
+            if (id > $stats_delivered_cnt)
+                $stats_delivered_cnt = id
+            end
             logger.info "Acknowledged \##{id}: #{notification.handler}/#{notification.path}"
             result &= notification.destroy
           end
@@ -103,6 +109,9 @@ module GithubNotificationProxy
         received_at: Time.now,
       )
       if notification.save
+        if (notification.id > $stats_received_cnt)
+          $stats_received_cnt = notification.id
+        end
         200
       else
         logger.error "Error saving notification: #{notification.errors.full_messages.join(', ')}"
@@ -122,6 +131,15 @@ module GithubNotificationProxy
       else
         [500, 'An error occurred while acknowledging notifications']
       end
+    end
+
+    get '/status' do
+      content_type 'application/json'
+      stats = {
+        'received' => $stats_received_cnt,
+        'delivered' => $stats_delivered_cnt
+      }
+      JSON[stats]
     end
 
     websocket '/retrieve-ws' do
