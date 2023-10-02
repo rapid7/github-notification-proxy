@@ -1,0 +1,16 @@
+---
+info:
+  title: Github Notification Proxy
+  description: A proxy for delivering GitHub webhooks to internal locations without
+    firewall pinholes or port forwarding.
+  x-cortex-git:
+    github:
+      alias: r7org
+      repository: rapid7/github-notification-proxy
+  x-cortex-tag: github-notification-proxy
+  x-cortex-type: service
+  x-cortex-domain-parents:
+  - tag: platform-delivery
+openapi: 3.0.1
+servers:
+- url: "/"
