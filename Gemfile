@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem 'data_mapper'
 gem 'dm-postgres-adapter'
-gem 'puma'
+gem 'puma', '>= 5.6.8'
 gem 'sinatra'
 gem 'sinatra-hijacker'
 gem 'thor'
