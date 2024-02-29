@@ -107,7 +107,7 @@ GEM
       websocket (>= 1.1.0)
     uuidtools (2.1.5)
     websocket (1.2.1)
-    yard (0.8.7.6)
+    yard (0.9.35)
 
 PLATFORMS
   ruby
@@ -129,4 +129,7 @@ DEPENDENCIES
   thor
   tubesock (>= 0.2.4)
   websocket
-  yard
+  yard (>= 0.9.35)
+
+BUNDLED WITH
+   2.1.4

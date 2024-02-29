@@ -12,7 +12,7 @@ gem 'tubesock', '>= 0.2.4'
 group :development do
   gem 'rake'
   gem 'redcarpet'
-  gem 'yard'
+  gem 'yard', '>= 0.9.35'
 end
 
 group :test do
